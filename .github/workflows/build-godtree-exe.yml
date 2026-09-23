@@ -10,9 +10,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with: { dotnet-version: '8.0.x' }
+      - name: Restore
+        run: dotnet restore desktop/GodTreeXOwais.csproj
+      - name: Compile gate
+        run: dotnet build desktop/GodTreeXOwais.csproj -c Release --no-restore -warnaserror
       - name: Publish single-file Windows EXE
         run: dotnet publish desktop/GodTreeXOwais.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o dist
+      - name: Smoke-check executable
+        shell: pwsh
+        run: |
+          if (!(Test-Path "dist/GodTreeXOwais.exe")) { throw "EXE missing" }
+          $size=(Get-Item "dist/GodTreeXOwais.exe").Length
+          if ($size -lt 1000000) { throw "EXE unexpectedly small: $size" }
+          Get-FileHash "dist/GodTreeXOwais.exe" -Algorithm SHA256
       - uses: actions/upload-artifact@v4
         with:
           name: GodTreeXOwais-Windows-x64
           path: dist/GodTreeXOwais.exe
+          if-no-files-found: error
