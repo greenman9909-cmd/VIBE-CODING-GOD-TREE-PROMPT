@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","additionalProperties":false,"required":["at","nodeId","state","message"],"properties":{"at":{"type":"string","format":"date-time"},"nodeId":{"type":"string"},"state":{"enum":[0,1,2,3,4]},"message":{"type":"string"}}}
